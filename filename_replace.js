@@ -1,10 +1,9 @@
 #! /usr/bin/env node
 
 // ファイル名を変更するスクリプトです。
-// 対象ディレクトリ内(サブフォルダ含)のhtmlファイルの中身も書き換えます
-// 第二引数に対象のディレクトリ, 第三引数に元のファイル名, 第四引数に新しいファイル名を指定してください
 // ex) cmd> node replace_filename.js {rootDir} {oldNameReg} {newNameReg}
-// ex) cmd> node replace_filename.js .\packages\AMGE ([A-Z]*[0-9]*)_G(0[0-9]{2})\.(.*) $1_G1$2.$3
+// ex) cmd> node replace_filename.js .\packages\AMGE ([A-Z]*[0-9]*)_G(0[0-9]{2})
+
 'use strict';
 
 const fs = require('fs');
