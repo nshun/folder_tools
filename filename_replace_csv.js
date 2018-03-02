@@ -1,21 +1,21 @@
 #! /usr/bin/env node
 
-// ファイル名を変更するスクリプトです。
-// ex) cmd> node replace_filename.js {rootDir} {oldNameReg} {newNameReg}
-// ex) cmd> node replace_filename.js .\packages\AMGE AMGEHA AMGEHC
+// ファイル名をcsv対応表を元に変更するスクリプトです。
+// ex) cmd> node replace_filename.js {rootDir} {csvDir}
+// ex) cmd> node replace_filename.js .\packages\AMGE .\replace.csv
 
 'use strict';
 
 const fs = require('fs');
 const path = require('path');
+const csv = require('csv');
 
 // root dir, oldName -> newName
 const rootDir = process.argv[2] || '.';
-const oldNameReg = new RegExp(process.argv[3], 'g');
-const newNameReg = process.argv[4];
+const csvPath = process.argv[3];
 
 // 引数が足りないとき
-if (process.argv.length < 5) {
+if (process.argv.length < 4) {
 	console.error('lack argument.');
 	process.exit(1);
 }
@@ -66,6 +66,14 @@ function writefile(path, string) {
 	});
 }
 
+function parseCSV(string) {
+	return new Promise((resolve, reject) => {
+		return csv.parse(string, (err, data) => {
+			return err ? reject(err) : resolve(data);
+		});
+	});
+}
+
 // ファイルを再帰的に検索
 async function fileSearcher(dirPath, fileCallback, errCallback) {
 	try {
@@ -80,7 +88,7 @@ async function fileSearcher(dirPath, fileCallback, errCallback) {
 	}
 }
 
-function replace(dir, oldNameReg, newNameReg) {
+async function replace(dir, oldNameReg, newNameReg) {
 	fileSearcher(dir, async filePath => {
 		// HTML内を置換
 		const baseName = path.basename(filePath);
@@ -108,4 +116,16 @@ function replace(dir, oldNameReg, newNameReg) {
 	});
 }
 
-replace(rootDir, oldNameReg, newNameReg);
+// replace(rootDir, oldNameReg, newNameReg);
+
+async function replaceFromCSV(dir, csvPath) {
+	// csv読み込み
+	const string = await readfile(csvPath);
+	const table = await parseCSV(string);
+	for (let row of table) {
+		console.log(row[0] + ' -> ' + row[1]);
+		await replace(dir, new RegExp(row[0], 'g'), row[1]);
+	};
+}
+
+replaceFromCSV(rootDir, csvPath);
