@@ -89,8 +89,8 @@ async function fileSearcher(dirPath, fileCallback, errCallback) {
 	}
 }
 
-function replace(dir, oldNameReg, newNameReg) {
-	fileSearcher(dir, async filePath => {
+async function replace(dir, oldNameReg, newNameReg) {
+	await fileSearcher(dir, async filePath => {
 		// HTML内を置換
 		const baseName = path.basename(filePath);
 		if (path.extname(baseName) === '.html') {
@@ -124,7 +124,7 @@ async function replaceFromCSV(dir, csvPath) {
 	const string = await readfile(csvPath);
 	const table = await parseCSV(string);
 	for (let row of table) {
-		await replace(dir, new RegExp(row[0], 'g'), row[1]);
+		replace(dir, new RegExp(row[0], 'g'), row[1]);
 	};
 }
 
