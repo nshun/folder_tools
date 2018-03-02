@@ -80,8 +80,8 @@ async function fileSearcher(dirPath, fileCallback, errCallback) {
 	}
 }
 
-function replace(dir, oldNameReg, newNameReg) {
-	fileSearcher(dir, async filePath => {
+asyncfunction replace(dir, oldNameReg, newNameReg) {
+	await fileSearcher(dir, async filePath => {
 		// HTML内を置換
 		const baseName = path.basename(filePath);
 		if (path.extname(baseName) === '.html') {

@@ -1,8 +1,9 @@
 #! /usr/bin/env node
 
-// ファイル名をcsv対応表を元に変更するスクリプトです。
+// ファイル名をcsv対応表(AMPHHA,AMPHHC...)を元に変更するスクリプトです。
 // ex) cmd> node replace_filename.js {rootDir} {csvDir}
 // ex) cmd> node replace_filename.js .\packages\AMGE .\replace.csv
+// "Error: EMFILE: too many open filesがでるとき" -> http://dotnsf.blog.jp/archives/1064268194.html
 
 'use strict';
 
@@ -88,7 +89,7 @@ async function fileSearcher(dirPath, fileCallback, errCallback) {
 	}
 }
 
-async function replace(dir, oldNameReg, newNameReg) {
+function replace(dir, oldNameReg, newNameReg) {
 	fileSearcher(dir, async filePath => {
 		// HTML内を置換
 		const baseName = path.basename(filePath);
@@ -123,7 +124,6 @@ async function replaceFromCSV(dir, csvPath) {
 	const string = await readfile(csvPath);
 	const table = await parseCSV(string);
 	for (let row of table) {
-		console.log(row[0] + ' -> ' + row[1]);
 		await replace(dir, new RegExp(row[0], 'g'), row[1]);
 	};
 }
